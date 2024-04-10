@@ -21,11 +21,12 @@ pub struct DecNodeChild<'a> {
 
 impl<'a> Display for DecNode<'a> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        if f.sign_plus() {
-            write!(f, "TODO")?;
-            return Ok(());
-        }
-        write!(f, "node{} [label=\"{}|{{", self.id, self.attribute)?;
+        let sr = if f.sign_plus() {
+            "shape=record, "
+        } else {
+            ""
+        };
+        write!(f, "node{} [{sr}label=\"{}|{{", self.id, self.attribute)?;
         for (i, (n, v)) in self.info_gains.iter().enumerate() {
             if i != 0 {
                 write!(f, "|")?;
@@ -35,7 +36,11 @@ impl<'a> Display for DecNode<'a> {
         write!(f, "}}\"]\n")?;
 
         for c in &self.children {
-            write!(f, "node{} -> {c}", self.id)?;
+            if f.sign_plus() {
+                write!(f, "node{} -> {c:+}", self.id)?;
+            } else {
+                write!(f, "node{} -> {c}", self.id)?;
+            }
         }
         Ok(())
     }
@@ -43,10 +48,6 @@ impl<'a> Display for DecNode<'a> {
 
 impl<'a> Display for DecNodeChild<'a> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        if f.sign_plus() {
-            return write!(f, "TODO");
-        }
-
         write!(f, "node{} [label=\"{} {{", self.target_id, self.attr_class)?;
         for (i, o) in self.objects.iter().enumerate() {
             if i != 0 {
@@ -57,16 +58,28 @@ impl<'a> Display for DecNodeChild<'a> {
         write!(f, "}}\"]\n")?;
 
         if let Some(node) = &self.child {
-            write!(f, "{}", node)?;
+            if f.sign_plus() {
+                write!(f, "{node:+}")?;
+            } else {
+                write!(f, "{node}")?;
+            }
         } else {
-            write!(f, "node{} [label=\"", self.target_id)?;
+            if f.sign_plus() {
+                write!(f, "node{} [shape=box, style=rounded, label=\"", self.target_id)?;
+            } else {
+                write!(f, "node{} [label=\"", self.target_id)?;
+            }
             let classes: HashSet<_> =
                 self.objects.iter().map(|o| o.class.as_str()).collect();
             for (i, c) in classes.iter().enumerate() {
                 if i != 0 {
                     write!(f, ",")?;
                 }
-                write!(f, "{c}")?;
+                if f.sign_plus() {
+                    write!(f, "{c:+}")?;
+                } else {
+                    write!(f, "{c}")?;
+                }
             }
             write!(f, "\"]")?;
         }

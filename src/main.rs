@@ -13,7 +13,9 @@ fn main() -> Result<()> {
 
     let data = DataDefinition::parse(BufReader::new(f))?;
     let tree = create_tree(&data);
-    println!("{tree}");
+    println!("digraph {{");
+    println!("{tree:+}");
+    println!("}}");
 
     Ok(())
 }

@@ -46,7 +46,8 @@ impl DataDefinition {
                 _ => bail!("Unexpected line in input: {line}"),
             }
         }
-        todo!()
+        
+        Ok(data)
     }
 
     fn parse_with<F, I>(&mut self, f: F, lines: &mut I) -> Result<()>
@@ -89,8 +90,8 @@ impl DataDefinition {
 
     fn parse_object(&mut self, line: &str) -> Result<()> {
         let mut spl = line.split_ascii_whitespace();
-        let class = spl.next().ok_or(anyhow!("missing attribute name"))?;
         let id = spl.next().ok_or(anyhow!("missing attribute name"))?;
+        let class = spl.next().ok_or(anyhow!("missing attribute name"))?;
         let id: i32 = id.parse()?;
 
         let mut attributes = HashMap::new();

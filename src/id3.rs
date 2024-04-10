@@ -33,7 +33,7 @@ fn make_node<'a>(
 
     let info_gains =
         calc_info_gains(attrs.iter().cloned(), objs.iter().cloned());
-    let child = if info_gains.len() > 1 && classes.len() > 1 {
+    let child = if info_gains.len() >= 1 && classes.len() > 1 {
         let attribute = info_gains
             .iter()
             .max_by(|(_, v1), (_, v2)| v1.total_cmp(v2))
@@ -45,11 +45,13 @@ fn make_node<'a>(
             .filter(|a| a.name == *attribute)
             .next()
             .unwrap();
+
         let attrs: Vec<_> = attrs
             .iter()
             .cloned()
             .filter(|a| a.name != *attribute)
             .collect();
+
         let children = a
             .values
             .iter()
@@ -65,6 +67,7 @@ fn make_node<'a>(
                         .collect::<Vec<_>>(),
                 )
             })
+            .filter(|c| !c.objects.is_empty())
             .collect();
 
         Some(DecNode {
@@ -105,16 +108,21 @@ fn calc_info_gain<'a, I>(attr: &Attribute, total_entropy: f64, objs: I) -> f64
 where
     I: Iterator<Item = &'a Object> + Clone,
 {
+    let total = objs.clone().count() as f64;
+
     let mut res = 0.0;
     for a in &attr.values {
+        let objs = objs.clone()
+            .filter(|o| o.attributes.get(&attr.name) == Some(a));
+        let filtered = objs.clone().count() as f64;
         res += calc_entropy(
             objs.clone()
                 .filter(|o| o.attributes.get(&attr.name) == Some(a)),
             |o| &o.class,
-        );
+        ) * filtered / total;
     }
 
-    res / total_entropy
+    total_entropy - res
 }
 
 fn calc_entropy<'a, I, F, V>(objs: I, by: F) -> f64
