@@ -70,7 +70,7 @@ impl DataDefinition {
         if spl.next().ok_or(anyhow!("missing :"))? != ":" {
             bail!("Expected :");
         }
-        
+
         let mut values = HashSet::new();
         values.extend(spl.map(str::to_string));
 
@@ -83,10 +83,31 @@ impl DataDefinition {
     }
 
     fn parse_class(&mut self, line: &str) -> Result<()> {
-        todo!()
+        self.classes.insert(line.trim().to_string());
+        Ok(())
     }
 
     fn parse_object(&mut self, line: &str) -> Result<()> {
-        todo!()
+        let mut spl = line.split_ascii_whitespace();
+        let class = spl.next().ok_or(anyhow!("missing attribute name"))?;
+        let id = spl.next().ok_or(anyhow!("missing attribute name"))?;
+        let id: i32 = id.parse()?;
+
+        let mut attributes = HashMap::new();
+
+        attributes.extend(
+            self.attributes
+                .iter()
+                .zip(spl)
+                .map(|(k, v)| (k.name.to_owned(), v.to_owned())),
+        );
+
+        self.objects.push(Object {
+            id,
+            class: class.to_string(),
+            attributes,
+        });
+
+        Ok(())
     }
 }
