@@ -7,20 +7,20 @@ use anyhow::{anyhow, bail, Error, Result};
 
 #[derive(Default)]
 pub struct DataDefinition {
-    attributes: Vec<Attribute>,
-    classes: HashSet<String>,
-    objects: Vec<Object>,
+    pub attributes: Vec<Attribute>,
+    pub classes: HashSet<String>,
+    pub objects: Vec<Object>,
 }
 
 pub struct Attribute {
-    name: String,
-    values: HashSet<String>,
+    pub name: String,
+    pub values: HashSet<String>,
 }
 
 pub struct Object {
-    id: i32,
-    class: String,
-    attributes: HashMap<String, String>,
+    pub id: i32,
+    pub class: String,
+    pub attributes: HashMap<String, String>,
 }
 
 impl DataDefinition {
