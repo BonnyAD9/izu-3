@@ -24,7 +24,7 @@ pub struct Object {
 }
 
 impl DataDefinition {
-    pub fn parse<R>(mut input: R) -> Result<DataDefinition>
+    pub fn parse<R>(input: R) -> Result<DataDefinition>
     where
         R: BufRead,
     {

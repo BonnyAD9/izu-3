@@ -1,4 +1,7 @@
-use std::{collections::{HashMap, HashSet}, fmt::{write, Display}};
+use std::{
+    collections::{HashMap, HashSet},
+    fmt::{write, Display},
+};
 
 use crate::data_definition::Object;
 
@@ -57,7 +60,8 @@ impl<'a> Display for DecNodeChild<'a> {
             write!(f, "{}", node)?;
         } else {
             write!(f, "node{} [label=\"", self.target_id)?;
-            let classes: HashSet<_> = self.objects.iter().map(|o| o.class.as_str()).collect();
+            let classes: HashSet<_> =
+                self.objects.iter().map(|o| o.class.as_str()).collect();
             for (i, c) in classes.iter().enumerate() {
                 if i != 0 {
                     write!(f, ",")?;

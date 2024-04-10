@@ -1,4 +1,7 @@
-use std::{collections::{HashMap, HashSet}, hash::Hash};
+use std::{
+    collections::{HashMap, HashSet},
+    hash::Hash,
+};
 
 use crate::{
     data_definition::{Attribute, DataDefinition, Object},
@@ -7,27 +10,29 @@ use crate::{
 
 pub fn create_tree(data: &DataDefinition) -> DecNode<'_> {
     let mut id = 0;
-    make_node(&mut id, "", data.attributes.iter(), data.objects.iter())
-        .child
-        .unwrap()
+    make_node(
+        &mut id,
+        "",
+        &data.attributes.iter().collect::<Vec<_>>(),
+        &data.objects.iter().collect::<Vec<_>>(),
+    )
+    .child
+    .unwrap()
 }
 
-fn make_node<'a, A, O>(
+fn make_node<'a>(
     id: &mut i32,
     attr_class: &'a str,
-    attrs: A,
-    objs: O,
-) -> DecNodeChild<'a>
-where
-    A: Iterator<Item = &'a Attribute> + Clone,
-    O: Iterator<Item = &'a Object> + Clone,
-{
+    attrs: &[&'a Attribute],
+    objs: &[&'a Object],
+) -> DecNodeChild<'a> {
     let my_id = *id;
     *id += 1;
 
-    let classes: HashSet<_> = objs.clone().map(|o| o.class.as_str()).collect();
+    let classes: HashSet<_> = objs.iter().map(|o| o.class.as_str()).collect();
 
-    let info_gains = calc_info_gains(attrs.clone(), objs.clone());
+    let info_gains =
+        calc_info_gains(attrs.iter().cloned(), objs.iter().cloned());
     let child = if info_gains.len() > 1 && classes.len() > 1 {
         let attribute = info_gains
             .iter()
@@ -36,10 +41,15 @@ where
             .0;
 
         let a = attrs
-            .clone()
+            .iter()
             .filter(|a| a.name == *attribute)
             .next()
             .unwrap();
+        let attrs: Vec<_> = attrs
+            .iter()
+            .cloned()
+            .filter(|a| a.name != *attribute)
+            .collect();
         let children = a
             .values
             .iter()
@@ -47,9 +57,12 @@ where
                 make_node(
                     id,
                     ac,
-                    attrs.clone().filter(|a| a.name != *attribute),
-                    objs.clone()
-                        .filter(|o| o.attributes.get(&a.name) == Some(ac)),
+                    &attrs,
+                    &objs
+                        .iter()
+                        .cloned()
+                        .filter(|o| o.attributes.get(&a.name) == Some(ac))
+                        .collect::<Vec<_>>(),
                 )
             })
             .collect();
@@ -66,7 +79,7 @@ where
 
     DecNodeChild {
         attr_class,
-        objects: objs.collect(),
+        objects: objs.to_vec(),
         child,
         target_id: my_id,
     }
