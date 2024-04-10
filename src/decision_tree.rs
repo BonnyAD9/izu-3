@@ -1,6 +1,6 @@
 use std::{
     collections::{HashMap, HashSet},
-    fmt::{write, Display},
+    fmt::Display,
 };
 
 use crate::data_definition::Object;
