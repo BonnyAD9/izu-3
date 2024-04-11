@@ -21,11 +21,7 @@ pub struct DecNodeChild<'a> {
 
 impl<'a> Display for DecNode<'a> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let sr = if f.sign_plus() {
-            "shape=record, "
-        } else {
-            ""
-        };
+        let sr = if f.sign_plus() { "shape=record, " } else { "" };
         write!(f, "node{} [{sr}label=\"{}|{{", self.id, self.attribute)?;
         for (i, (n, v)) in self.info_gains.iter().enumerate() {
             if i != 0 {
@@ -65,7 +61,11 @@ impl<'a> Display for DecNodeChild<'a> {
             }
         } else {
             if f.sign_plus() {
-                write!(f, "node{} [shape=box, style=rounded, label=\"", self.target_id)?;
+                write!(
+                    f,
+                    "node{} [shape=box, style=rounded, label=\"",
+                    self.target_id
+                )?;
             } else {
                 write!(f, "node{} [label=\"", self.target_id)?;
             }

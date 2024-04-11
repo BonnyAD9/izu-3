@@ -112,14 +112,16 @@ where
 
     let mut res = 0.0;
     for a in &attr.values {
-        let objs = objs.clone()
+        let objs = objs
+            .clone()
             .filter(|o| o.attributes.get(&attr.name) == Some(a));
         let filtered = objs.clone().count() as f64;
         res += calc_entropy(
             objs.clone()
                 .filter(|o| o.attributes.get(&attr.name) == Some(a)),
             |o| &o.class,
-        ) * filtered / total;
+        ) * filtered
+            / total;
     }
 
     total_entropy - res

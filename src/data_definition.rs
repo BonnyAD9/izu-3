@@ -46,7 +46,7 @@ impl DataDefinition {
                 _ => bail!("Unexpected line in input: {line}"),
             }
         }
-        
+
         Ok(data)
     }
 
