@@ -27,7 +27,7 @@ impl<'a> Display for DecNode<'a> {
             if i != 0 {
                 write!(f, "|")?;
             }
-            write!(f, "{n}={v}")?;
+            write!(f, "{n}={v:.4}")?;
         }
         writeln!(f, "}}\"]")?;
 
