@@ -33,18 +33,14 @@ fn make_node<'a>(
 
     let info_gains =
         calc_info_gains(attrs.iter().cloned(), objs.iter().cloned());
-    let child = if info_gains.len() >= 1 && classes.len() > 1 {
+    let child = if !info_gains.is_empty() && classes.len() > 1 {
         let attribute = info_gains
             .iter()
             .max_by(|(_, v1), (_, v2)| v1.total_cmp(v2))
             .unwrap()
             .0;
 
-        let a = attrs
-            .iter()
-            .filter(|a| a.name == *attribute)
-            .next()
-            .unwrap();
+        let a = attrs.iter().find(|a| a.name == *attribute).unwrap();
 
         let attrs: Vec<_> = attrs
             .iter()

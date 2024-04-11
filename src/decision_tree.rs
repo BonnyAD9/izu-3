@@ -29,7 +29,7 @@ impl<'a> Display for DecNode<'a> {
             }
             write!(f, "{n}={v}")?;
         }
-        write!(f, "}}\"]\n")?;
+        writeln!(f, "}}\"]")?;
 
         for c in &self.children {
             if f.sign_plus() {
@@ -51,7 +51,7 @@ impl<'a> Display for DecNodeChild<'a> {
             }
             write!(f, "{}", o.id)?;
         }
-        write!(f, "}}\"]\n")?;
+        writeln!(f, "}}\"]")?;
 
         if let Some(node) = &self.child {
             if f.sign_plus() {

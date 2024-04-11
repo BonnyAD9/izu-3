@@ -55,7 +55,7 @@ impl DataDefinition {
         I: Iterator<Item = Result<String>>,
         F: Fn(&mut Self, &str) -> Result<()>,
     {
-        while let Some(line) = lines.next() {
+        for line in lines {
             let line = line?;
             if line == "}" {
                 break;
